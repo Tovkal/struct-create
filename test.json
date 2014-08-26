@@ -3,5 +3,6 @@
 	"db_password": "db_pass",
 	"db_name": "db_name",
 	"pkg_name": "JsonTest",
-	"tag_label": "db"
+	"tag_label": "db",
+	"db_server": "tcp(localhost:3306)"
 }
