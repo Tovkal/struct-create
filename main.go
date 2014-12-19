@@ -6,18 +6,20 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var defaults = Configuration{
-	DbUser: "db_user",
+	DbUser:     "db_user",
 	DbPassword: "db_pw",
-	DbName: "bd_name",
-	PkgName: "DbStructs",
-	TagLabel: "db",
+	DbName:     "bd_name",
+	PkgName:    "DbStructs",
+	TagLabel:   "db",
+	DbServer:   "localhost",
 }
 
 var config Configuration
@@ -30,6 +32,7 @@ type Configuration struct {
 	PkgName string `json:"pkg_name"`
 	// TagLabel produces tags commonly used to match database field names with Go struct members
 	TagLabel string `json:"tag_label"`
+	DbServer string `json:"db_server"`
 }
 
 type ColumnSchema struct {
@@ -102,7 +105,7 @@ func writeStructs(schemas []ColumnSchema) (int, error) {
 }
 
 func getSchema() []ColumnSchema {
-	conn, err := sql.Open("mysql", config.DbUser+":"+config.DbPassword+"@/information_schema")
+	conn, err := sql.Open("mysql", config.DbUser+":"+config.DbPassword+"@"+config.DbServer+"/information_schema")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -184,7 +187,7 @@ var configFile = flag.String("json", "", "Config file")
 
 func main() {
 	flag.Parse()
-	
+
 	if len(*configFile) > 0 {
 		f, err := os.Open(*configFile)
 		if err != nil {
