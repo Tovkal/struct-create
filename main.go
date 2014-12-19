@@ -79,7 +79,7 @@ func writeStructs(schemas []ColumnSchema) (int, error) {
 		}
 		out = out + "\t" + formatName(cs.ColumnName) + " " + goType
 		if len(config.TagLabel) > 0 {
-			out = out + "\t`" + config.TagLabel + ":\"" + cs.ColumnName + "\"`"
+			out = out + "\t`" + config.TagLabel + ":\"" + cs.ColumnName + "\" json:\"" + jsonColumnName(cs.ColumnName) + "\"`"
 		}
 		out = out + "\n"
 		currentTable = cs.TableName
@@ -142,6 +142,22 @@ func formatName(name string) string {
 			continue
 		}
 		newName = newName + strings.Replace(p, string(p[0]), strings.ToUpper(string(p[0])), 1)
+	}
+	return newName
+}
+
+func jsonColumnName(name string) string {
+	parts := strings.Split(name, "_")
+	newName := ""
+	for i, p := range parts {
+		if len(p) < 1 {
+			continue
+		}
+		if i > 0 {
+			newName = newName + strings.Replace(p, string(p[0]), strings.ToUpper(string(p[0])), 1)
+		} else {
+			newName = newName + p
+		}
 	}
 	return newName
 }
